@@ -1,0 +1,14 @@
+[DEFAULT]
+bind_host = 0.0.0.0
+bind_port = 9191
+log_file = /var/log/glance/registry.log
+backlog = 4096
+api_limit_max = 1000
+limit_param_default = 25
+
+<%= render "database_snippet.erb" %>
+
+<%= render "keystone_authtoken_snippet.erb" %>
+
+[paste_deploy]
+flavor = keystone

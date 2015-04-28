@@ -1,0 +1,37 @@
+[ml2]
+type_drivers = <%= @driver %>
+tenant_network_types = <%= @driver %>
+mechanism_drivers = openvswitch
+
+[ml2_type_flat]
+
+[ml2_type_gre]
+<% if @driver == 'gre' %>
+tunnel_id_ranges = 1:1000
+<% end %>
+
+[ml2_type_vlan]
+<% if @driver == 'vlan' %>
+network_vlan_ranges = physnet1:<%= @network_vlan_ranges %>
+<% end %>
+
+[ml2_type_vxlan]
+
+[securitygroup]
+firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_security_group = True
+
+<% if @driver == 'gre' %>
+<% if @instance_tunnels_interface_ip_address %>
+[ovs]
+enable_tunneling = True
+tunnel_type = gre
+local_ip = <%= @instance_tunnels_interface_ip_address %>
+<% end %>
+<% elsif @driver == 'vlan' %>
+<% if @bridge %>
+[ovs]
+tenant_network_type = vlan
+bridge_mappings = physnet1:<%= @bridge %>
+<% end %>
+<% end %>

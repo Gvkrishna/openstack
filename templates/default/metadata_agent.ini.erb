@@ -1,0 +1,11 @@
+[DEFAULT]
+auth_url = http://<%= @auth_host %>:5000/v2.0
+auth_region = regionOne
+admin_tenant_name = <%= @admin_tenant_name %>
+admin_user = <%= @admin_user %>
+admin_password = <%= @admin_password %>
+nova_metadata_ip = <%= @nova_host %>
+metadata_proxy_shared_secret = <%= @neutron_metadata_proxy_shared_secret %>
+<% if @verbose %>
+verbose = True
+<% end %>

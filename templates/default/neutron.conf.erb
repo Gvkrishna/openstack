@@ -1,0 +1,66 @@
+[DEFAULT]
+state_path = /var/lib/neutron
+lock_path = $state_path/lock
+core_plugin = neutron.plugins.ml2.plugin.Ml2Plugin
+#core_plugin = ml2
+notification_driver = neutron.openstack.common.notifier.rpc_notifier
+auth_strategy = keystone
+rpc_backend = neutron.openstack.common.rpc.impl_kombu
+<%= render "rabbitmq_snippet.erb" %>
+<% if @nova_host %>
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+nova_url = http://<%= @nova_host %>:8774/v2
+nova_admin_username = <%= @nova_admin_user %>
+nova_admin_tenant_id = <%= @nova_admin_tenant_id.call %>
+nova_admin_password = <%= @nova_admin_password %>
+nova_admin_auth_url = http://<%= @nova_host %>:35357/v2.0
+<% end %>
+service_plugins = router,vpnaas
+allow_overlapping_ips = True
+<% if @verbose %>
+verbose = True
+<% end %>
+<% if @host %>
+network_api_class = nova.network.neutronv2.api.API
+neutron_url = http://<%= @host %>:9696
+neutron_auth_strategy = keystone
+neutron_admin_tenant_name = <%= @admin_tenant_name %>
+neutron_admin_username = <%= @admin_user %>
+neutron_admin_password = <%= @admin_password %>
+neutron_admin_auth_url = http://<%= @host %>:35357/v2.0
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+security_group_api = neutron
+<% end %>
+
+[ml2]
+type_drivers = <%= @driver %>
+tenant_network_types = <%= @driver %>
+mechanism_drivers = openvswitch
+
+<% if @driver == 'vlan' %>
+[ml2_type_vlan]
+network_vlan_ranges = <%= @network_vlan_ranges %>
+<% elsif @driver == 'gre' %>
+[ml2_type_gre]
+tunnel_id_ranges = 1:1000
+<% end %>
+
+[securitygroup]
+firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_security_group = True
+
+[quotas]
+
+[agent]
+root_helper = sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf
+
+<%= render "keystone_authtoken_snippet.erb" %>
+signing_dir = $state_path/keystone-signing
+
+<%= render "database_snippet.erb" %>
+
+[service_providers]
+service_provider = LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
+service_provider = VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default

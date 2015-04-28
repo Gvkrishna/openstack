@@ -1,0 +1,6 @@
+[DEFAULT]
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+use_namespaces = True
+<% if @verbose %>
+verbose = True
+<% end %>

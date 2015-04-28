@@ -1,0 +1,31 @@
+[DEFAULT]
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+iscsi_helper = tgtadm
+volume_name_template = volume-%s
+volume_group = cinder-volumes
+verbose = True
+auth_strategy = keystone
+state_path = /var/lib/cinder
+lock_path = /var/lock/cinder
+volumes_dir = /var/lib/cinder/volumes
+
+rpc_backend = rabbit
+<%= render "rabbitmq_snippet.erb" %>
+
+<% if @my_ip %>
+my_ip = <%= @my_ip.call %>
+<% end %>
+
+<% if @verbose %>
+verbose = True
+<% end %>
+
+<% if @backend == "glusterfs" %>
+glusterfs_shares_config = /etc/cinder/glusterfs
+volume_driver = cinder.volume.drivers.glusterfs.GlusterfsDriver
+<% end %>
+
+<%= render "database_snippet.erb" %>
+
+<%= render "keystone_authtoken_snippet.erb" %>
