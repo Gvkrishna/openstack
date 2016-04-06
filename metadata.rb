@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2014 Karol Szuster
+# Copyright (c) 2016 venkata teja
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,8 +21,8 @@
 #
 
 name             'openstack'
-maintainer       'Karol Szuster'
-maintainer_email 'szuster.karol@gmail.com'
+maintainer       'venkata teja'
+maintainer_email 'tejaboya@gmail.com'
 license          'MIT'
 description      'Installs/Configures openstack'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
